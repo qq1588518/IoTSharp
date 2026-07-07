@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetLibVersion)</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageId>IoTSharp.Data.JsonDB</PackageId>
+    <PackageTags>IoTSharp;JSON;SQL;ADO.NET;Database</PackageTags>
+    <Description>Run SQL queries over JSON payloads through an ADO.NET provider for IoTSharp and .NET applications.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\README.md">
+      <Pack>true</Pack>
+      <PackagePath>\</PackagePath>
+      <Link>README.md</Link>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\assets\jsondb-logo-128.png">
+      <Pack>true</Pack>
+      <PackagePath>\</PackagePath>
+      <Link>jsondb-logo-128.png</Link>
+    </None>
+  </ItemGroup>
+
+</Project>

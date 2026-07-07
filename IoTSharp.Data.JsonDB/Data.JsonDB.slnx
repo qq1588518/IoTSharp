@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/build/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="NuGet.Config" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/IoTSharp.Data.JsonDB/IoTSharp.Data.JsonDB.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/IoTSharp.Data.JsonDB.Tests/IoTSharp.Data.JsonDB.Tests.csproj" />
+  </Folder>
+</Solution>
