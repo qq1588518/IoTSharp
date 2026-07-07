@@ -35,12 +35,12 @@
   </Folder>
   <Folder Name="/4.Tools/">
     <File Path="buildimage.cmd" />
-    <Project Path="tools/ProductMqttSimulator/ProductMqttSimulator.csproj" />
     <File Path="tools/ef_db_drop.cmd" />
     <File Path="tools/ef_mg_add.cmd" />
     <File Path="tools/ef_mg_remove.cmd" />
     <File Path="tools/setnpm.cmd" />
     <File Path="tools/upgrade_ef.cmd" />
+    <Project Path="tools/ProductMqttSimulator/ProductMqttSimulator.csproj" />
   </Folder>
   <Folder Name="/DataStorage/">
     <Project Path="IoTSharp.Data.Storage/IoTSharp.Data.ClickHouse/IoTSharp.Data.ClickHouse.csproj" />
@@ -52,15 +52,6 @@
     <Project Path="IoTSharp.Data.Storage/IoTSharp.Data.Sqlite/IoTSharp.Data.Sqlite.csproj" />
     <Project Path="IoTSharp.Data.Storage/IoTSharp.Data.SqlServer/IoTSharp.Data.SqlServer.csproj" />
   </Folder>
-  <Project Path="ClientApp/ClientApp.esproj">
-    <Platform Project="AnyCPU" />
-    <Build />
-    <Deploy />
-  </Project>
-  <Project Path="docker-compose.dcproj">
-    <Platform Project="AnyCPU" />
-    <Build />
-  </Project>
   <Project Path="IoTSharp.Contracts/IoTSharp.Contracts.csproj" />
   <Project Path="IoTSharp.Data.JsonDB/src/IoTSharp.Data.JsonDB/IoTSharp.Data.JsonDB.csproj" />
   <Project Path="IoTSharp.Data.JsonDB/tests/IoTSharp.Data.JsonDB.Tests/IoTSharp.Data.JsonDB.Tests.csproj" />
@@ -84,5 +75,12 @@
     <Build Solution="Release|Any CPU" Project="false" />
   </Project>
   <Project Path="IoTSharp/IoTSharp.csproj" />
+  <Project Path="SonnetDB/extensions/SonnetDB.Caching/SonnetDB.Caching.csproj" />
+  <Project Path="SonnetDB/src/SonnetDB.Cli/SonnetDB.Cli.csproj" />
+  <Project Path="SonnetDB/src/SonnetDB.Core/SonnetDB.Core.csproj" />
+  <Project Path="SonnetDB/src/SonnetDB.Data/SonnetDB.Data.csproj" />
+  <Project Path="SonnetDB/src/SonnetDB.EntityFrameworkCore/SonnetDB.EntityFrameworkCore.csproj" />
+  <Project Path="SonnetDB/src/SonnetDB.Studio/SonnetDB.Studio.csproj" />
+  <Project Path="SonnetDB/src/SonnetDB/SonnetDB.csproj" />
   <Project Path="SonnetDB/src/Testcontainers.SonnetDB/Testcontainers.SonnetDB.csproj" />
 </Solution>
