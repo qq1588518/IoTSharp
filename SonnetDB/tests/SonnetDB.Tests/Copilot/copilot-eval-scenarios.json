@@ -1,0 +1,975 @@
+[
+  {
+    "id": "metadata_list_databases",
+    "category": "metadata",
+    "question": "我当前能看到哪些数据库？",
+    "plannedTools": [
+      {
+        "name": "list_databases"
+      }
+    ],
+    "expectedToolResultContains": [
+      "CurrentDatabase",
+      "alpha",
+      "beta"
+    ],
+    "expectedAnswerContains": [
+      "alpha",
+      "beta"
+    ],
+    "answerSummary": "当前可见数据库是 alpha 和 beta。"
+  },
+  {
+    "id": "metadata_list_measurements",
+    "category": "metadata",
+    "question": "alpha 里现在有哪些 measurement？",
+    "plannedTools": [
+      {
+        "name": "list_measurements",
+        "maxRows": 20
+      }
+    ],
+    "expectedToolResultContains": [
+      "Measurements",
+      "cpu",
+      "memory",
+      "slow_query_log"
+    ],
+    "expectedAnswerContains": [
+      "cpu",
+      "memory",
+      "slow_query_log"
+    ],
+    "answerSummary": "alpha 里目前能看到 cpu、memory、reactor、meter、slow_query_log 等 measurement。"
+  },
+  {
+    "id": "metadata_describe_cpu",
+    "category": "metadata",
+    "question": "cpu measurement 的字段和 tag 是什么？",
+    "plannedTools": [
+      {
+        "name": "describe_measurement",
+        "measurement": "cpu"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "\"measurement\":\"cpu\""
+    ],
+    "expectedToolResultContains": [
+      "host",
+      "region",
+      "usage",
+      "temp",
+      "float64",
+      "int64"
+    ],
+    "expectedAnswerContains": [
+      "host",
+      "usage",
+      "temp"
+    ],
+    "answerSummary": "cpu 的 tag 是 host、region，field 是 usage(float64) 和 temp(int64)。"
+  },
+  {
+    "id": "metadata_describe_slow_query_log",
+    "category": "metadata",
+    "question": "slow_query_log 的 schema 长什么样？",
+    "plannedTools": [
+      {
+        "name": "describe_measurement",
+        "measurement": "slow_query_log"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "\"measurement\":\"slow_query_log\""
+    ],
+    "expectedToolResultContains": [
+      "slow_query_log",
+      "db",
+      "latency_ms",
+      "rows_scanned"
+    ],
+    "expectedAnswerContains": [
+      "db",
+      "latency_ms",
+      "rows_scanned"
+    ],
+    "answerSummary": "slow_query_log 以 db 作为 tag，field 包括 latency_ms 和 rows_scanned。"
+  },
+  {
+    "id": "metadata_sample_cpu",
+    "category": "metadata",
+    "question": "给我抽样看 2 行 cpu 原始数据。",
+    "plannedTools": [
+      {
+        "name": "sample_rows",
+        "measurement": "cpu",
+        "n": 2
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "\"measurement\":\"cpu\"",
+      "\"n\":2"
+    ],
+    "expectedToolResultContains": [
+      "RequestedRows",
+      "edge-01",
+      "0.5",
+      "40"
+    ],
+    "expectedAnswerContains": [
+      "edge-01",
+      "usage",
+      "temp"
+    ],
+    "answerSummary": "cpu 的样例数据里已经能看到 edge-01 的 usage 和 temp 原始值。"
+  },
+  {
+    "id": "metadata_sample_memory",
+    "category": "metadata",
+    "question": "抽样给我看 2 行 memory 数据。",
+    "plannedTools": [
+      {
+        "name": "sample_rows",
+        "measurement": "memory",
+        "n": 2
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "\"measurement\":\"memory\"",
+      "\"n\":2"
+    ],
+    "expectedToolResultContains": [
+      "memory",
+      "70",
+      "66",
+      "free"
+    ],
+    "expectedAnswerContains": [
+      "used",
+      "free"
+    ],
+    "answerSummary": "memory 的样例行已经展示出 used/free 两个字段。"
+  },
+  {
+    "id": "metadata_describe_then_sample_cpu",
+    "category": "metadata",
+    "question": "先看 cpu 的 schema，再给 2 行样例。",
+    "plannedTools": [
+      {
+        "name": "describe_measurement",
+        "measurement": "cpu"
+      },
+      {
+        "name": "sample_rows",
+        "measurement": "cpu",
+        "n": 2
+      }
+    ],
+    "expectedToolResultContains": [
+      "usage",
+      "temp",
+      "edge-01"
+    ],
+    "expectedAnswerContains": [
+      "schema",
+      "样例"
+    ],
+    "answerSummary": "cpu 的 schema 和 2 行样例都已经确认，列定义与原始行格式是一致的。"
+  },
+  {
+    "id": "metadata_show_measurements_sql",
+    "category": "metadata",
+    "question": "直接执行 SHOW MEASUREMENTS 给我看库表列表。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SHOW MEASUREMENTS"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SHOW MEASUREMENTS"
+    ],
+    "expectedToolResultContains": [
+      "show_measurements",
+      "cpu",
+      "memory",
+      "meter"
+    ],
+    "expectedAnswerContains": [
+      "SHOW MEASUREMENTS",
+      "cpu"
+    ],
+    "answerSummary": "SHOW MEASUREMENTS 已返回当前库里的 measurement 列表，其中包含 cpu、memory 等。"
+  },
+  {
+    "id": "query_cpu_host_limit",
+    "category": "query",
+    "question": "查询 edge-01 的前 2 条 cpu 记录。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT * FROM cpu WHERE host = 'edge-01' LIMIT 2"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT * FROM cpu WHERE host = 'edge-01' LIMIT 2"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "edge-01",
+      "0.5",
+      "0.65"
+    ],
+    "expectedAnswerContains": [
+      "edge-01",
+      "2 条"
+    ],
+    "answerSummary": "已经查到 edge-01 的前 2 条 cpu 记录。"
+  },
+  {
+    "id": "query_cpu_time_filter",
+    "category": "query",
+    "question": "查一下 2000 到 5000 之间的 cpu 数据。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT * FROM cpu WHERE time >= 2000 AND time < 5000"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT * FROM cpu WHERE time >= 2000 AND time < 5000"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "2000",
+      "3000",
+      "4000"
+    ],
+    "expectedAnswerContains": [
+      "2000",
+      "5000"
+    ],
+    "answerSummary": "时间过滤后的 cpu 结果集（time ∈ [2000, 5000)）中包含 2000、3000、4000 这三条记录。"
+  },
+  {
+    "id": "query_cpu_region_filter",
+    "category": "query",
+    "question": "帮我筛出 region=cn-bj 的 cpu 记录。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT * FROM cpu WHERE region = 'cn-bj'"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT * FROM cpu WHERE region = 'cn-bj'"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "cn-bj",
+      "edge-02"
+    ],
+    "expectedAnswerContains": [
+      "cn-bj",
+      "edge-02"
+    ],
+    "answerSummary": "region=cn-bj 的 cpu 记录都属于 edge-02 这条序列。"
+  },
+  {
+    "id": "query_avg_cpu_usage",
+    "category": "query",
+    "question": "算一下 edge-01 的 cpu 平均 usage。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT avg(usage) FROM cpu WHERE host = 'edge-01'"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT avg(usage) FROM cpu WHERE host = 'edge-01'"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "0.617"
+    ],
+    "expectedAnswerContains": [
+      "0.617"
+    ],
+    "answerSummary": "edge-01 的 cpu 平均 usage 约为 0.6175。"
+  },
+  {
+    "id": "query_max_cpu_temp_region",
+    "category": "query",
+    "question": "cn-bj 区域的 cpu 最高温度是多少？",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT max(temp) FROM cpu WHERE region = 'cn-bj'"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT max(temp) FROM cpu WHERE region = 'cn-bj'"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "47"
+    ],
+    "expectedAnswerContains": [
+      "47"
+    ],
+    "answerSummary": "cn-bj 区域内 cpu 的最高温度是 47。"
+  },
+  {
+    "id": "query_cpu_group_by_time",
+    "category": "query",
+    "question": "按 2 秒桶统计 cpu 的平均 usage 和 count。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT avg(usage), count(usage) FROM cpu GROUP BY time(2000ms)"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT avg(usage), count(usage) FROM cpu GROUP BY time(2000ms)"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "0.575",
+      "2"
+    ],
+    "expectedAnswerContains": [
+      "2 秒桶",
+      "count"
+    ],
+    "answerSummary": "2 秒桶聚合已经返回每个桶的 avg(usage) 和 count(usage)。"
+  },
+  {
+    "id": "query_memory_limit_offset",
+    "category": "query",
+    "question": "看一下 edge-02 的 memory 第 2 行样本。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT * FROM memory WHERE host = 'edge-02' LIMIT 1 OFFSET 1"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT * FROM memory WHERE host = 'edge-02' LIMIT 1 OFFSET 1"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "1000",
+      "54",
+      "46"
+    ],
+    "expectedAnswerContains": [
+      "edge-02",
+      "54"
+    ],
+    "answerSummary": "edge-02 的第 2 行 memory 样本时间戳是 1000，used/free 为 54/46。"
+  },
+  {
+    "id": "query_sum_memory_used",
+    "category": "query",
+    "question": "把 edge-01 的 memory used 求和。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT sum(used) FROM memory WHERE host = 'edge-01'"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT sum(used) FROM memory WHERE host = 'edge-01'"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "99"
+    ],
+    "expectedAnswerContains": [
+      "99"
+    ],
+    "answerSummary": "edge-01 的 memory used 总和是 99。"
+  },
+  {
+    "id": "query_explain_cpu_avg",
+    "category": "query",
+    "question": "解释一下 edge-01 的 cpu 平均 usage 这条 SQL 会扫多少。",
+    "plannedTools": [
+      {
+        "name": "explain_sql",
+        "sql": "SELECT avg(usage) FROM cpu WHERE host = 'edge-01' AND time >= 0"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT avg(usage) FROM cpu WHERE host = 'edge-01' AND time >= 0"
+    ],
+    "expectedToolResultContains": [
+      "cpu",
+      "MatchedSeriesCount",
+      "HasTimeFilter",
+      "TagFilterCount"
+    ],
+    "expectedAnswerContains": [
+      "扫描",
+      "edge-01"
+    ],
+    "answerSummary": "explain_sql 已给出 edge-01 这条 cpu 聚合查询的扫描估算。"
+  },
+  {
+    "id": "query_explain_then_run_slow_query_avg",
+    "category": "query",
+    "question": "先 explain 一下 slow_query_log 的平均延迟 SQL，再顺手执行它。",
+    "plannedTools": [
+      {
+        "name": "explain_sql",
+        "sql": "SELECT avg(latency_ms) FROM slow_query_log WHERE db = 'alpha'"
+      },
+      {
+        "name": "query_sql",
+        "sql": "SELECT avg(latency_ms) FROM slow_query_log WHERE db = 'alpha'"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT avg(latency_ms) FROM slow_query_log WHERE db = 'alpha'"
+    ],
+    "expectedToolResultContains": [
+      "slow_query_log",
+      "TagFilterCount",
+      "266.666"
+    ],
+    "expectedAnswerContains": [
+      "平均延迟",
+      "266.666"
+    ],
+    "answerSummary": "slow_query_log 中 alpha 库的平均延迟约为 266.6667 ms，扫描估算也已返回。"
+  },
+  {
+    "id": "analytics_pid_series",
+    "category": "analytics",
+    "question": "用 pid_series 看一下 reactor 的逐点控制输出。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT pid_series(temperature, 10, 1, 1, 1) FROM reactor"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT pid_series(temperature, 10, 1, 1, 1) FROM reactor"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "10",
+      "8",
+      "9"
+    ],
+    "expectedAnswerContains": [
+      "10",
+      "8",
+      "9"
+    ],
+    "answerSummary": "reactor 的 pid_series 逐点控制输出依次是 10、8、9。"
+  },
+  {
+    "id": "analytics_pid_aggregate",
+    "category": "analytics",
+    "question": "直接给我 reactor 的 pid 聚合结果。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT pid(temperature, 10, 1, 1, 1) FROM reactor"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT pid(temperature, 10, 1, 1, 1) FROM reactor"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "9"
+    ],
+    "expectedAnswerContains": [
+      "9"
+    ],
+    "answerSummary": "reactor 的 pid 聚合结果是 9。"
+  },
+  {
+    "id": "analytics_pid_estimate_zn",
+    "category": "analytics",
+    "question": "帮我用 ZN 方法估一下 reactor_step 的 PID 参数。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT pid_estimate(temperature, 'zn', 1.0, 0.1, 0.1, NULL) FROM reactor_step"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT pid_estimate(temperature, 'zn', 1.0, 0.1, 0.1, NULL) FROM reactor_step"
+    ],
+    "expectedToolResultContains": [
+      "kp",
+      "ki",
+      "kd"
+    ],
+    "expectedAnswerContains": [
+      "ZN",
+      "kp"
+    ],
+    "answerSummary": "reactor_step 的 ZN 自动整定结果已经返回 kp、ki、kd 三个参数。"
+  },
+  {
+    "id": "analytics_pid_estimate_imc",
+    "category": "analytics",
+    "question": "用 IMC 方法估一下 reactor_step_fast 的 PID 参数。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT pid_estimate(temperature, 'imc', 1.0, 0.1, 0.1, 50) FROM reactor_step_fast"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT pid_estimate(temperature, 'imc', 1.0, 0.1, 0.1, 50) FROM reactor_step_fast"
+    ],
+    "expectedToolResultContains": [
+      "kp",
+      "ki",
+      "kd"
+    ],
+    "expectedAnswerContains": [
+      "IMC",
+      "kp"
+    ],
+    "answerSummary": "reactor_step_fast 的 IMC 整定结果已经返回 kp、ki、kd。"
+  },
+  {
+    "id": "analytics_forecast_linear",
+    "category": "analytics",
+    "question": "预测 meter 接下来 3 个点的线性结果。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT * FROM forecast(meter, value, 3, 'linear') WHERE device='m1'"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT * FROM forecast(meter, value, 3, 'linear') WHERE device='m1'"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "lower",
+      "upper",
+      "50"
+    ],
+    "expectedAnswerContains": [
+      "3 个点",
+      "50"
+    ],
+    "answerSummary": "meter 的线性预测已经返回未来 3 个点，首个预测值约为 50。"
+  },
+  {
+    "id": "analytics_forecast_holt_winters",
+    "category": "analytics",
+    "question": "用 holt_winters 预测 meter_seasonal 后面 4 个点。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT * FROM forecast(meter_seasonal, value, 4, 'holt_winters', 4) WHERE device='m1'"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT * FROM forecast(meter_seasonal, value, 4, 'holt_winters', 4) WHERE device='m1'"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "lower",
+      "upper",
+      "device"
+    ],
+    "expectedAnswerContains": [
+      "holt_winters",
+      "4 个点"
+    ],
+    "answerSummary": "meter_seasonal 的 holt_winters 预测已经返回后续 4 个点。"
+  },
+  {
+    "id": "analytics_anomaly_zscore",
+    "category": "analytics",
+    "question": "找出 cpu_anomaly 里的异常点。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT time, anomaly(usage, 'zscore', 2.0) FROM cpu_anomaly"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT time, anomaly(usage, 'zscore', 2.0) FROM cpu_anomaly"
+    ],
+    "expectedToolResultContains": [
+      "BooleanValue",
+      "true",
+      "5000"
+    ],
+    "expectedAnswerContains": [
+      "异常",
+      "5000"
+    ],
+    "answerSummary": "cpu_anomaly 在时间 5000 处出现了明显的异常点。"
+  },
+  {
+    "id": "analytics_changepoint_cusum",
+    "category": "analytics",
+    "question": "检测 cpu_shift 里的变点。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT time, changepoint(value, 'cusum', 3.0) FROM cpu_shift"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT time, changepoint(value, 'cusum', 3.0) FROM cpu_shift"
+    ],
+    "expectedToolResultContains": [
+      "BooleanValue",
+      "true",
+      "10000"
+    ],
+    "expectedAnswerContains": [
+      "变点",
+      "10000"
+    ],
+    "answerSummary": "cpu_shift 在时间 10000 附近检测到了变点（changepoint / level shift）。"
+  },
+  {
+    "id": "analytics_explain_forecast",
+    "category": "analytics",
+    "question": "解释一下 meter 的 forecast SQL 会扫描多少。",
+    "plannedTools": [
+      {
+        "name": "explain_sql",
+        "sql": "SELECT * FROM forecast(meter, value, 5, 'linear') WHERE device='m1'"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT * FROM forecast(meter, value, 5, 'linear') WHERE device='m1'"
+    ],
+    "expectedToolResultContains": [
+      "meter",
+      "TagFilterCount",
+      "select"
+    ],
+    "expectedAnswerContains": [
+      "forecast",
+      "扫描"
+    ],
+    "answerSummary": "forecast(meter, value, ...) 这条 SQL 的扫描估算已经返回。"
+  },
+  {
+    "id": "analytics_sample_reactor_step_fast",
+    "category": "analytics",
+    "question": "先抽 2 行 reactor_step_fast 看看阶跃数据。",
+    "plannedTools": [
+      {
+        "name": "sample_rows",
+        "measurement": "reactor_step_fast",
+        "n": 2
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "\"measurement\":\"reactor_step_fast\"",
+      "\"n\":2"
+    ],
+    "expectedToolResultContains": [
+      "reactor_step_fast",
+      "r1",
+      "0"
+    ],
+    "expectedAnswerContains": [
+      "reactor_step_fast",
+      "阶跃"
+    ],
+    "answerSummary": "reactor_step_fast 的前 2 行阶跃样例已经返回。"
+  },
+  {
+    "id": "troubleshoot_sample_slow_query_log",
+    "category": "troubleshoot",
+    "question": "抽样看 2 行 slow_query_log。",
+    "plannedTools": [
+      {
+        "name": "sample_rows",
+        "measurement": "slow_query_log",
+        "n": 2
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "\"measurement\":\"slow_query_log\"",
+      "\"n\":2"
+    ],
+    "expectedToolResultContains": [
+      "slow_query_log",
+      "alpha",
+      "latency_ms",
+      "rows_scanned"
+    ],
+    "expectedAnswerContains": [
+      "slow_query_log",
+      "latency_ms"
+    ],
+    "answerSummary": "slow_query_log 的 2 行样例已经展示出 latency_ms 和 rows_scanned。"
+  },
+  {
+    "id": "troubleshoot_explain_slow_query_log",
+    "category": "troubleshoot",
+    "question": "解释一下 slow_query_log 平均延迟查询会扫多少。",
+    "plannedTools": [
+      {
+        "name": "explain_sql",
+        "sql": "SELECT avg(latency_ms) FROM slow_query_log WHERE db = 'alpha'"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT avg(latency_ms) FROM slow_query_log WHERE db = 'alpha'"
+    ],
+    "expectedToolResultContains": [
+      "slow_query_log",
+      "MatchedSeriesCount",
+      "TagFilterCount"
+    ],
+    "expectedAnswerContains": [
+      "slow_query_log",
+      "扫描"
+    ],
+    "answerSummary": "slow_query_log 平均延迟查询的 explain 估算已经返回，包含匹配序列、segment、block 与扫描行数估算。"
+  },
+  {
+    "id": "troubleshoot_multiturn_describe_cpu",
+    "category": "troubleshoot",
+    "question": "按刚才提到的 cpu，再把字段列表总结一遍。",
+    "history": [
+      {
+        "role": "user",
+        "content": "先告诉我 alpha 里有哪些 measurement。"
+      },
+      {
+        "role": "assistant",
+        "content": "alpha 里有 cpu、memory、reactor、meter、slow_query_log 等 measurement。"
+      }
+    ],
+    "plannedTools": [
+      {
+        "name": "describe_measurement",
+        "measurement": "cpu"
+      }
+    ],
+    "expectedToolResultContains": [
+      "cpu",
+      "host",
+      "temp"
+    ],
+    "expectedAnswerContains": [
+      "host",
+      "region",
+      "temp"
+    ],
+    "answerSummary": "延续刚才的上下文，cpu 的 tag 是 host/region，field 是 usage/temp。"
+  },
+  {
+    "id": "troubleshoot_multiturn_sample_memory",
+    "category": "troubleshoot",
+    "question": "那再给我看 2 行 memory 的样例。",
+    "history": [
+      {
+        "role": "user",
+        "content": "memory 的 schema 是什么？"
+      },
+      {
+        "role": "assistant",
+        "content": "memory 以 host 为 tag，field 包括 used 和 free。"
+      }
+    ],
+    "plannedTools": [
+      {
+        "name": "sample_rows",
+        "measurement": "memory",
+        "n": 2
+      }
+    ],
+    "expectedToolResultContains": [
+      "memory",
+      "used",
+      "free"
+    ],
+    "expectedAnswerContains": [
+      "used",
+      "free"
+    ],
+    "answerSummary": "memory 的 2 行样例已经补充返回，字段 used 和 free 与刚才的 schema 对得上。"
+  },
+  {
+    "id": "troubleshoot_multiturn_avg_cpu_usage",
+    "category": "troubleshoot",
+    "question": "那就按刚才那个 host，给我算一下 cpu 平均 usage。",
+    "history": [
+      {
+        "role": "user",
+        "content": "我想看 edge-01 这台主机的 cpu 情况。"
+      },
+      {
+        "role": "assistant",
+        "content": "好的，我们继续围绕 edge-01 这台主机查询 cpu。"
+      }
+    ],
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT avg(usage) FROM cpu WHERE host = 'edge-01'"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "SELECT avg(usage) FROM cpu WHERE host = 'edge-01'"
+    ],
+    "expectedToolResultContains": [
+      "0.617"
+    ],
+    "expectedAnswerContains": [
+      "edge-01",
+      "0.617"
+    ],
+    "answerSummary": "沿用刚才的 host 上下文，edge-01 的 cpu 平均 usage 约为 0.6175。"
+  },
+  {
+    "id": "repair_missing_measurement",
+    "category": "troubleshoot",
+    "question": "帮我查一下 missing_cpu 的前 2 条记录。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT * FROM missing_cpu LIMIT 2"
+      }
+    ],
+    "repairedSql": "SELECT * FROM cpu LIMIT 2",
+    "expectedRetryCount": 1,
+    "expectedToolArgumentsContains": [
+      "SELECT * FROM missing_cpu LIMIT 2"
+    ],
+    "expectedRetryArgumentsContains": [
+      "SELECT * FROM cpu LIMIT 2"
+    ],
+    "expectedToolResultContains": [
+      "ReturnedRows",
+      "edge-01",
+      "0.5"
+    ],
+    "expectedAnswerContains": [
+      "missing_cpu",
+      "改写"
+    ],
+    "answerSummary": "我已经把 missing_cpu 改写成 cpu，并成功查回前 2 条记录。"
+  },
+  {
+    "id": "repair_missing_field",
+    "category": "troubleshoot",
+    "question": "算一下 edge-01 的 temp_c 平均值。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT avg(temp_c) FROM cpu WHERE host = 'edge-01'"
+      }
+    ],
+    "repairedSql": "SELECT avg(temp) FROM cpu WHERE host = 'edge-01'",
+    "expectedRetryCount": 1,
+    "expectedToolArgumentsContains": [
+      "SELECT avg(temp_c) FROM cpu WHERE host = 'edge-01'"
+    ],
+    "expectedRetryArgumentsContains": [
+      "SELECT avg(temp) FROM cpu WHERE host = 'edge-01'"
+    ],
+    "expectedToolResultContains": [
+      "41.5"
+    ],
+    "expectedAnswerContains": [
+      "temp_c",
+      "41.5"
+    ],
+    "answerSummary": "temp_c 并不存在，我已经改写成 temp，edge-01 的平均温度约为 41.5。"
+  },
+  {
+    "id": "repair_typo_measurement",
+    "category": "troubleshoot",
+    "question": "帮我看一下 mem 的前 2 行。",
+    "plannedTools": [
+      {
+        "name": "query_sql",
+        "sql": "SELECT * FROM mem LIMIT 2"
+      }
+    ],
+    "repairedSql": "SELECT * FROM memory LIMIT 2",
+    "expectedRetryCount": 1,
+    "expectedToolArgumentsContains": [
+      "SELECT * FROM mem LIMIT 2"
+    ],
+    "expectedRetryArgumentsContains": [
+      "SELECT * FROM memory LIMIT 2"
+    ],
+    "expectedToolResultContains": [
+      "used",
+      "free",
+      "ReturnedRows"
+    ],
+    "expectedAnswerContains": [
+      "mem",
+      "memory"
+    ],
+    "answerSummary": "我已经把 mem 修正成 memory，并返回前 2 行结果。"
+  },
+  {
+    "id": "write_draft_create_measurement",
+    "category": "write",
+    "question": "帮我在 alpha 里建一个 sensor 表，需要 host 当 tag，温度 temp 和湿度 humidity 作为 field。",
+    "plannedTools": [
+      {
+        "name": "draft_sql",
+        "sql": "CREATE MEASUREMENT sensor (host TAG, temp FIELD FLOAT, humidity FIELD FLOAT)"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "CREATE MEASUREMENT sensor"
+    ],
+    "expectedToolResultContains": [
+      "create_measurement",
+      "sensor",
+      "host",
+      "humidity"
+    ],
+    "expectedAnswerContains": [
+      "CREATE MEASUREMENT",
+      "sensor",
+      "humidity"
+    ],
+    "answerSummary": "已经为你起草建表 SQL：```sql\nCREATE MEASUREMENT sensor (host TAG, temp FIELD FLOAT, humidity FIELD FLOAT)\n```\n确认后可调用 execute_sql 执行。"
+  },
+  {
+    "id": "write_execute_insert_cpu",
+    "category": "write",
+    "question": "立即往 cpu 写入一条 host=edge-99、usage=0.42、temp=37 的样例数据。",
+    "plannedTools": [
+      {
+        "name": "execute_sql",
+        "sql": "INSERT INTO cpu (time, host, region, usage, temp) VALUES (1700000000000, 'edge-99', 'cn-east', 0.42, 37)"
+      }
+    ],
+    "expectedToolArgumentsContains": [
+      "INSERT INTO cpu"
+    ],
+    "expectedToolResultContains": [
+      "insert",
+      "cpu",
+      "RowsAffected",
+      "1"
+    ],
+    "expectedAnswerContains": [
+      "INSERT",
+      "cpu",
+      "edge-99"
+    ],
+    "answerSummary": "已经把这条样例点写入 cpu：```sql\nINSERT INTO cpu (time, host, region, usage, temp) VALUES (1700000000000, 'edge-99', 'cn-east', 0.42, 37)\n```\nRowsAffected=1。"
+  }
+]

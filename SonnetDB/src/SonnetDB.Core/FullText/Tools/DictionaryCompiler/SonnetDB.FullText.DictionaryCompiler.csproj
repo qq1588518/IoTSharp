@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>SonnetDB.FullText.DictionaryCompiler</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsAotCompatible>false</IsAotCompatible>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\Tokenizers\Jieba\ChineseDictionary.cs"
+             Link="ChineseDictionary.cs" />
+    <Compile Include="..\..\Tokenizers\Jieba\ChineseDictionaryCompiler.cs"
+             Link="ChineseDictionaryCompiler.cs" />
+    <Compile Include="..\..\Tokenizers\Jieba\CompactDictionary.cs"
+             Link="CompactDictionary.cs" />
+    <Compile Include="..\..\Tokenizers\Jieba\DoubleArrayTrie.cs"
+             Link="DoubleArrayTrie.cs" />
+  </ItemGroup>
+
+</Project>

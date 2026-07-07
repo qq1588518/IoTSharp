@@ -1,0 +1,4 @@
+interface:
+  display_name: "SonnetDB Connector CMake"
+  short_description: "Build SonnetDB C/Java connectors."
+  default_prompt: "Use $sonnetdb-connectors-cmake to build and smoke-test the SonnetDB C and Java native connectors."

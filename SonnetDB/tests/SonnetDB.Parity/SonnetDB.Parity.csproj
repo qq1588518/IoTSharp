@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <!--
+      Parity adapters reference official competitor .NET clients such as Npgsql.
+      They are intentionally kept out of the main SonnetDB.slnx AOT pipeline.
+      Competitor services are started by docker-compose.parity.yml; no Testcontainers dependency is used.
+    -->
+    <IsAotCompatible>false</IsAotCompatible>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="AWSSDK.S3" />
+    <PackageReference Include="InfluxDB.Client" />
+    <PackageReference Include="MeiliSearch" />
+    <PackageReference Include="ClickHouse.Client" />
+    <PackageReference Include="NATS.Client.Core" />
+    <PackageReference Include="NATS.Client.JetStream" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Qdrant.Client" />
+    <PackageReference Include="Snappier" />
+    <PackageReference Include="StackExchange.Redis" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SonnetDB.Core\SonnetDB.Core.csproj" />
+    <ProjectReference Include="..\..\src\SonnetDB.Data\SonnetDB.Data.csproj" />
+  </ItemGroup>
+
+</Project>

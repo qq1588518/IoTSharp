@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  {% assign docs_baseurl = site.docs_baseurl | default: '/help' %}
+  {% assign app_link_url = site.app_link_url | default: '/admin/' %}
+  {% assign app_link_text = site.app_link_text | default: '管理' %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title %}{{ page.title }} | {% endif %}SonnetDB Docs</title>
+  <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}SonnetDB help center{% endif %}">
+  <link rel="stylesheet" href="{{ docs_baseurl }}/assets/docs.css">
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="{{ docs_baseurl }}/">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 88 88" role="img">
+            <defs>
+              <linearGradient id="docsMarkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#0d3b66" />
+                <stop offset="55%" stop-color="#146c94" />
+                <stop offset="100%" stop-color="#18a058" />
+              </linearGradient>
+            </defs>
+            <rect x="6" y="6" width="76" height="76" rx="24" fill="url(#docsMarkGradient)" />
+            <path d="M22 58 L34 46 L44 52 L56 34 L66 40" fill="none" stroke="#f8fbff" stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
+            <path d="M22 26 H66" fill="none" stroke="rgba(255,255,255,0.36)" stroke-linecap="round" stroke-width="4" />
+            <circle cx="66" cy="40" r="4.5" fill="#f8fbff" />
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>SonnetDB</strong>
+          <span>Help Center</span>
+        </span>
+      </a>
+
+      <nav class="top-nav" aria-label="Primary">
+        <a href="{{ docs_baseurl }}/">概览</a>
+        <a href="{{ docs_baseurl }}/getting-started/">开始使用</a>
+        <a href="{{ docs_baseurl }}/sql-reference/">SQL</a>
+        <a href="{{ docs_baseurl }}/industrial-ai-applications/">工业 AI</a>
+        <a href="{{ docs_baseurl }}/ado-net/">ADO.NET</a>
+        <a href="{{ docs_baseurl }}/bulk-ingest/">批量写入</a>
+        <a href="{{ docs_baseurl }}/architecture/">架构</a>
+      </nav>
+
+      <div class="header-actions">
+        {% if app_link_url %}
+        <a class="ghost-link" href="{{ app_link_url }}">{{ app_link_text }}</a>
+        {% endif %}
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <aside class="side-nav">
+        <p class="side-nav-label">Documentation</p>
+        <a href="{{ docs_baseurl }}/">概览</a>
+        <a href="{{ docs_baseurl }}/getting-started/">开始使用</a>
+        <a href="{{ docs_baseurl }}/data-model/">数据模型</a>
+        <a href="{{ docs_baseurl }}/sql-reference/">SQL 参考</a>
+        <a href="{{ docs_baseurl }}/industrial-ai-applications/">工业 AI 应用</a>
+        <a href="{{ docs_baseurl }}/embedded-api/">嵌入式与 in-proc API</a>
+        <a href="{{ docs_baseurl }}/ado-net/">ADO.NET 参考</a>
+        <a href="{{ docs_baseurl }}/cli-reference/">CLI 参考</a>
+        <a href="{{ docs_baseurl }}/bulk-ingest/">批量写入</a>
+        <a href="{{ docs_baseurl }}/architecture/">架构总览</a>
+        <a href="{{ docs_baseurl }}/file-format/">文件格式与目录布局</a>
+        <a href="{{ docs_baseurl }}/releases/">发布与打包</a>
+      </aside>
+
+      <article class="content-card">
+        <header class="page-head">
+          <p class="eyebrow">SonnetDB Docs</p>
+          <h1>{{ page.title }}</h1>
+          {% if page.description %}
+          <p class="page-description">{{ page.description }}</p>
+          {% endif %}
+        </header>
+        <div class="page-content">
+          {{ content }}
+        </div>
+      </article>
+    </main>
+  </div>
+</body>
+</html>

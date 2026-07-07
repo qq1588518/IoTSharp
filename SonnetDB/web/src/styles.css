@@ -1,0 +1,53 @@
+﻿:root {
+  --sndb-bg: #eef5f9;
+  --sndb-surface: #f8fbff;
+  --sndb-surface-strong: #ffffff;
+  --sndb-ink-strong: #10263d;
+  --sndb-ink-soft: #557188;
+  --sndb-outline: rgba(13, 59, 102, 0.1);
+  --sndb-brand: #0d3b66;
+  --sndb-brand-alt: #18a058;
+  --sndb-shadow: 0 20px 44px rgba(13, 59, 102, 0.08);
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--sndb-ink-strong);
+  font-family: "Avenir Next", "Segoe UI Variable", "PingFang SC", "Microsoft YaHei UI", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(24, 160, 88, 0.08), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, #eef5f9 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+code {
+  padding: 0.1em 0.4em;
+  border-radius: 0.5em;
+  background: rgba(13, 59, 102, 0.07);
+  color: var(--sndb-brand);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}

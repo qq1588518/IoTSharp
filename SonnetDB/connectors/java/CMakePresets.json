@@ -1,0 +1,47 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "windows-x64",
+      "displayName": "Java connector on Windows x64",
+      "binaryDir": "${sourceDir}/../../artifacts/connectors/java/windows-x64",
+      "cacheVariables": {
+        "SONNETDB_JAVA_BUILD_FFM": "ON",
+        "SONNETDB_JAVA_NATIVE_LIBRARY": "${sourceDir}/../../artifacts/connectors/c/win-x64/Release/SonnetDB.Native.dll"
+      }
+    },
+    {
+      "name": "windows-x64-java8",
+      "displayName": "Java connector on Windows x64 (Java 8 compatible JNI only)",
+      "binaryDir": "${sourceDir}/../../artifacts/connectors/java/windows-x64-java8",
+      "cacheVariables": {
+        "SONNETDB_JAVA_BUILD_FFM": "OFF",
+        "SONNETDB_JAVA_NATIVE_LIBRARY": "${sourceDir}/../../artifacts/connectors/c/win-x64/Release/SonnetDB.Native.dll"
+      }
+    },
+    {
+      "name": "linux-x64",
+      "displayName": "Java connector on Linux x64",
+      "binaryDir": "${sourceDir}/../../artifacts/connectors/java/linux-x64",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "SONNETDB_JAVA_BUILD_FFM": "ON",
+        "SONNETDB_JAVA_NATIVE_LIBRARY": "${sourceDir}/../../artifacts/connectors/c/linux-x64/SonnetDB.Native.so"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-x64",
+      "configurePreset": "windows-x64"
+    },
+    {
+      "name": "windows-x64-java8",
+      "configurePreset": "windows-x64-java8"
+    },
+    {
+      "name": "linux-x64",
+      "configurePreset": "linux-x64"
+    }
+  ]
+}

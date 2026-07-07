@@ -1,0 +1,118 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{csproj,props,targets,xml}]
+indent_size = 2
+
+[*.{json,yml,yaml}]
+indent_size = 2
+
+[*.cs]
+charset = unset
+
+# Naming rules
+# Constants and private static fields are handled by code review conventions; this rule only guards regular private fields.
+dotnet_naming_rule.private_static_fields_are_allowed.severity = none
+dotnet_naming_rule.private_static_fields_are_allowed.symbols = private_static_fields
+dotnet_naming_rule.private_static_fields_are_allowed.style = camel_case_underscore_prefix
+
+dotnet_naming_symbols.private_static_fields.applicable_kinds = field
+dotnet_naming_symbols.private_static_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_static_fields.required_modifiers = static
+
+dotnet_naming_rule.private_fields_should_be_camel_case.severity = warning
+dotnet_naming_rule.private_fields_should_be_camel_case.symbols = private_fields
+dotnet_naming_rule.private_fields_should_be_camel_case.style = camel_case_underscore_prefix
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.camel_case_underscore_prefix.capitalization = camel_case
+dotnet_naming_style.camel_case_underscore_prefix.required_prefix = _
+
+# Code style
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = false:suggestion
+
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# File header
+file_header_template =
+
+[src/SonnetDB.Core/**/*.cs]
+# SonnetDB.Core 热路径性能 analyzer。TreatWarningsAsErrors=true，因此 warning 级别只放低噪声规则；
+# 语义取舍较多的规则先保持 suggestion，避免压制核心逻辑警告或引入无注释 suppressions。
+# 避免重复分配空数组。
+dotnet_diagnostic.CA1825.severity = warning
+# 索引集合避免 LINQ First/Last 等热路径扩展方法。
+dotnet_diagnostic.CA1826.severity = warning
+# 用 Any() 替代 Count()/LongCount() 判空。
+dotnet_diagnostic.CA1827.severity = warning
+# async 查询用 AnyAsync() 替代 CountAsync()/LongCountAsync() 判空。
+dotnet_diagnostic.CA1828.severity = warning
+# 用 Length/Count 属性替代 Enumerable.Count()。
+dotnet_diagnostic.CA1829.severity = warning
+# 字典查询使用 Keys/Values 集合上的高效 Contains。
+dotnet_diagnostic.CA1841.severity = warning
+# Dictionary 命中并取值时优先 TryGetValue。
+dotnet_diagnostic.CA1854.severity = warning
+# 有 Count/Length/IsEmpty 时避免 Enumerable.Any()。
+dotnet_diagnostic.CA1860.severity = warning
+# 避免把常量数组反复作为参数分配。
+dotnet_diagnostic.CA1861.severity = warning
+# Dictionary 添加前检查优先 TryAdd。
+dotnet_diagnostic.CA1864.severity = warning
+# 缓存并复用 JsonSerializerOptions。
+dotnet_diagnostic.CA1869.severity = warning
+# 多字符搜索优先缓存 SearchValues<T>。
+dotnet_diagnostic.CA1870.severity = warning
+
+# 这些规则对热点代码很有价值，但可能需要结合语义和可读性评审后逐步收敛。
+# StringBuilder.Append 单字符优先 char。
+dotnet_diagnostic.CA1834.severity = suggestion
+# stream/read/write 优先 Memory/Span overload。
+dotnet_diagnostic.CA1835.severity = suggestion
+# 字符串拼接可考虑 span-based overload。
+dotnet_diagnostic.CA1845.severity = suggestion
+# 避免 Substring 中间字符串，优先 AsSpan。
+dotnet_diagnostic.CA1846.severity = suggestion
+# 单字符搜索优先 char overload。
+dotnet_diagnostic.CA1847.severity = suggestion
+# 一次性 hash 优先静态 HashData。
+dotnet_diagnostic.CA1850.severity = suggestion
+# 避免 IEnumerable 多次枚举。
+dotnet_diagnostic.CA1851.severity = suggestion
+# 内部热路径可用具体类型承载局部变量/字段。
+dotnet_diagnostic.CA1859.severity = suggestion
+dotnet_code_quality.CA1859.api_surface = private, internal
+# 忽略大小写比较优先 StringComparison overload，避免 ToUpper/ToLower 分配。
+dotnet_diagnostic.CA1862.severity = suggestion
+# StartsWith 单字符优先 char overload。
+dotnet_diagnostic.CA1865.severity = suggestion
+# EndsWith 单字符优先 char overload。
+dotnet_diagnostic.CA1866.severity = suggestion
+# Contains 单字符优先 char overload。
+dotnet_diagnostic.CA1867.severity = suggestion
+
+# 字符串比较正确性同时影响性能：先作为 suggestion 暴露，后续可按模块逐步升 warning。
+# 显式指定 StringComparison。
+dotnet_diagnostic.CA1307.severity = suggestion
+# 优先 ordinal StringComparison。
+dotnet_diagnostic.CA1309.severity = suggestion

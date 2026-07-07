@@ -1,0 +1,136 @@
+﻿# docker-compose.yml — SonnetDB 基准测试外部数据库环境
+#
+# 用法：
+#   docker compose up -d            # 启动所有服务（包括 sonnetdb）
+#   docker compose down -v          # 停止并删除容器与卷
+#
+# SonnetDB 连接信息：
+#   URL:    http://localhost:${SONNETDB_BENCH_PORT:-5080}
+#   Token:  bench-admin-token（角色：admin）
+#
+# InfluxDB 连接信息：
+#   URL:    http://localhost:8086
+#   Token:  my-super-secret-auth-token
+#   Org:    sndb
+#   Bucket: benchmarks
+#
+# TDengine 连接信息（REST API）：
+#   URL:      http://localhost:6041
+#   Username: root
+#   Password: taosdata
+#
+# IoTDB 连接信息（REST API v2）：
+#   URL:      http://localhost:18080
+#   Username: root
+#   Password: root
+#
+# TimescaleDB 连接信息：
+#   Host Port: ${TIMESCALEDB_BENCH_PORT:-5433}
+#   Username:  postgres
+#   Password:  postgres
+#   Database:  benchmarks
+
+services:
+  sonnetdb:
+    build:
+      context: ../../../
+      dockerfile: src/SonnetDB/Dockerfile
+    image: iotsharp/sonnetdb:bench
+    container_name: sndb-bench-server
+    ports:
+      - "${SONNETDB_BENCH_PORT:-5080}:5080"
+    environment:
+      - SONNETDB_SonnetDBServer__DataRoot=/data
+      - SONNETDB_SonnetDBServer__AutoLoadExistingDatabases=true
+      - SONNETDB_SonnetDBServer__AllowAnonymousProbes=true
+      - SONNETDB_SonnetDBServer__Tokens__bench-admin-token=admin
+    volumes:
+      - sonnetdb-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/5080' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  influxdb:
+    image: influxdb:2.7
+    container_name: sndb-bench-influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=password123
+      - DOCKER_INFLUXDB_INIT_ORG=sndb
+      - DOCKER_INFLUXDB_INIT_BUCKET=benchmarks
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tdengine:
+    image: tdengine/tdengine:3.3.4.3
+    container_name: sndb-bench-tdengine
+    ports:
+      - "6030:6030"   # 原生连接端口
+      - "6041:6041"   # RESTful API 端口
+    environment:
+      - TAOS_FQDN=localhost
+    volumes:
+      - tdengine-data:/var/lib/taos
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf -u root:taosdata http://localhost:6041/rest/sql -d 'SELECT SERVER_VERSION()' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  iotdb:
+    image: apache/iotdb:2.0.5-standalone
+    container_name: sndb-bench-iotdb
+    ports:
+      - "6667:6667"
+      - "18080:18080"
+    environment:
+      - enable_rest_service=true
+      - rest_service_port=18080
+      - rest_query_default_row_size_limit=1200000
+    volumes:
+      - iotdb-data:/iotdb/data
+      - iotdb-logs:/iotdb/logs
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/18080' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg17
+    container_name: sndb-bench-timescaledb
+    ports:
+      - "${TIMESCALEDB_BENCH_PORT:-5433}:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=benchmarks
+    volumes:
+      - timescaledb-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d benchmarks"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+volumes:
+  sonnetdb-data:
+  influxdb-data:
+  tdengine-data:
+  iotdb-data:
+  iotdb-logs:
+  timescaledb-data:

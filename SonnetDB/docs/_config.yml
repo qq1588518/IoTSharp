@@ -1,0 +1,9 @@
+﻿title: SonnetDB Docs
+description: SonnetDB server help and product documentation.
+markdown: CommonMark
+permalink: pretty
+docs_baseurl: /help
+app_link_url: /admin/
+app_link_text: 管理
+home_primary_url: /admin/
+home_primary_text: 打开管理界面

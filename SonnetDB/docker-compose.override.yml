@@ -1,0 +1,5 @@
+services:
+  sonnetdb:
+    build:
+      context: .
+      dockerfile: src/SonnetDB/Dockerfile

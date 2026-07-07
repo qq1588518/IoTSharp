@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SonnetDB</RootNamespace>
+    <AssemblyName>SonnetDB.Core</AssemblyName>
+    <PackageId>SonnetDB.Core</PackageId>
+    <Title>SonnetDB.Core</Title>
+    <Description>SonnetDB 嵌入式多模型数据库核心库，打开本地数据库目录并提供 SQL、时序、关系表、KV、文档、搜索、向量和本地消息队列能力。</Description>
+    <PackageReadmeFile>PackageReadme.md</PackageReadmeFile>
+    <JiebaDictionaryCompilerProject>$(MSBuildThisFileDirectory)FullText\Tools\DictionaryCompiler\SonnetDB.FullText.DictionaryCompiler.csproj</JiebaDictionaryCompilerProject>
+    <JiebaDictionaryCompilerOutput>$(MSBuildThisFileDirectory)FullText\Tools\DictionaryCompiler\bin\$(Configuration)\$(TargetFramework)\</JiebaDictionaryCompilerOutput>
+    <JiebaDictionaryCompilerDll>$(JiebaDictionaryCompilerOutput)SonnetDB.FullText.DictionaryCompiler.dll</JiebaDictionaryCompilerDll>
+    <JiebaDictionaryText>$(MSBuildThisFileDirectory)FullText\Tokenizers\Jieba\Resources\dict.txt</JiebaDictionaryText>
+    <JiebaDictionaryDat>$(MSBuildThisFileDirectory)FullText\Tokenizers\Jieba\Resources\Generated\dict.dat</JiebaDictionaryDat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Hashing" />
+    <PackageReference Include="System.Numerics.Tensors" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="FullText\Tools\DictionaryCompiler\**\*.cs" />
+    <EmbeddedResource Include="FullText\Tokenizers\Jieba\Resources\dict.txt"
+                      LogicalName="SonnetDB.FullText.Tokenizers.Jieba.Resources.dict.txt" />
+    <EmbeddedResource Include="FullText\Tokenizers\Jieba\Resources\Generated\dict.dat"
+                      LogicalName="SonnetDB.FullText.Tokenizers.Jieba.Resources.dict.dat"
+                      Condition="Exists('FullText\Tokenizers\Jieba\Resources\Generated\dict.dat')" />
+  </ItemGroup>
+
+  <Target Name="CompileChineseDictionary"
+          BeforeTargets="BeforeBuild"
+          Inputs="$(JiebaDictionaryText);$(MSBuildThisFileDirectory)FullText\Tools\DictionaryCompiler\Program.cs"
+          Outputs="$(JiebaDictionaryDat)">
+    <MakeDir Directories="$(MSBuildThisFileDirectory)FullText\Tokenizers\Jieba\Resources\Generated" />
+    <MSBuild Projects="$(JiebaDictionaryCompilerProject)"
+             Targets="Restore;Build"
+             Properties="Configuration=$(Configuration);TargetFramework=$(TargetFramework);RuntimeIdentifier=;SelfContained=false;PublishAot=false;OutputPath=$(JiebaDictionaryCompilerOutput)" />
+    <Exec Command="dotnet &quot;$(JiebaDictionaryCompilerDll)&quot; &quot;$(JiebaDictionaryText)&quot; &quot;$(JiebaDictionaryDat)&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <None Include="PackageReadme.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+</Project>

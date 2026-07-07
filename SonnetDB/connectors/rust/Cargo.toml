@@ -1,0 +1,12 @@
+[package]
+name = "sonnetdb"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Rust connector for the SonnetDB native C ABI"
+links = "SonnetDB.Native"
+build = "build.rs"
+
+[lib]
+name = "sonnetdb"
+path = "src/lib.rs"

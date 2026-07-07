@@ -1,0 +1,105 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SonnetDB</RootNamespace>
+    <AssemblyName>SonnetDB</AssemblyName>
+    <Description>SonnetDB 服务器版，内置 HTTP API、管理前端与远程 ADO.NET 接入能力。</Description>
+    <SpaRoot>..\..\web</SpaRoot>
+    <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
+    <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
+    <SpaProxyRedirectUrl>https://localhost:5173/admin/</SpaProxyRedirectUrl>
+
+    <!--
+      AOT 优先。Native AOT publish 需要在命令行/CI 里加 -p:PublishAot=true。
+      这里默认不打开 PublishAot，避免日常 `dotnet build` 触发完整 AOT 链路（速度慢且不必要）。
+      但通过 IsAotCompatible（继承自 Directory.Build.props）已经在 build 阶段开启了 IL/AOT 分析器，
+      所以违反 AOT 兼容性的代码会立刻在 build 时报错。
+    -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <!--
+      ASP.NET Core 的 Request Delegate Generator（RDG）source generator：
+      AOT 模式下 MapGet/MapPost 等接受 Delegate 的扩展方法是 RequiresDynamicCode 的，
+      启用 RDG 后，编译期会为每个端点生成 trim/AOT 安全的具体类型 wrapper。
+    -->
+    <EnableRequestDelegateGenerator>true</EnableRequestDelegateGenerator>
+    <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SonnetDB.Core\SonnetDB.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SpaProxy" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" />
+    <PackageReference Include="Microsoft.Extensions.AI" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" />
+    <PackageReference Include="Snappier" />
+    <!-- M17 #90：OTel 引导 + OTLP/Console exporter。仅 Server 程序集；Core 保持零第三方。 -->
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" />
+    <!-- M17 #91：Prometheus 拉取端点（Observability:Prometheus:Enabled=true 时接管 /metrics）。 -->
+    <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SonnetDB.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Container.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- Copilot prompt 模板：作为嵌入式资源打包，运行时通过 PromptTemplates 读取 -->
+  <ItemGroup>
+    <EmbeddedResource Include="Copilot\Prompts\*.md" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <AdminUiSourceDir>$(MSBuildThisFileDirectory)..\..\web</AdminUiSourceDir>
+    <AdminUiDistDir>$(AdminUiSourceDir)\dist</AdminUiDistDir>
+    <BuildAdminUi Condition="'$(BuildAdminUi)' == ''">false</BuildAdminUi>
+    <UserSecretsId>d2b80c70-bf72-4ca5-8406-75a635424f9f</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup Condition="Exists('$(AdminUiDistDir)')">
+    <Content Include="$(AdminUiDistDir)\**\*.*">
+      <Link>wwwroot\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <TargetPath>wwwroot\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="BuildAdminUiForPublish" AfterTargets="ComputeFilesToPublish" Condition="'$(BuildAdminUi)' == 'true' AND '$(PublishDir)' != '' AND Exists('$(AdminUiSourceDir)\package-lock.json')">
+    <Exec Command="npm ci --no-audit --no-fund" WorkingDirectory="$(AdminUiSourceDir)" />
+    <Exec Command="npm run build" WorkingDirectory="$(AdminUiSourceDir)" />
+
+    <ItemGroup>
+      <DistFiles Include="$(AdminUiDistDir)\**\*.*" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>wwwroot\%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
+</Project>

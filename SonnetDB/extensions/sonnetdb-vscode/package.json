@@ -1,0 +1,91 @@
+{
+  "name": "sonnetdb-vscode",
+  "displayName": "SonnetDB",
+  "description": "Official SonnetDB extension for Visual Studio Code.",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onView:sonnetdb.explorer",
+    "onCommand:sonnetdb.addConnection",
+    "onCommand:sonnetdb.refreshExplorer",
+    "onCommand:sonnetdb.runQuery",
+    "onCommand:sonnetdb.openCopilot",
+    "onCommand:sonnetdb.startManagedLocalServer"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "sonnetdb.addConnection",
+        "title": "SonnetDB: Add Connection"
+      },
+      {
+        "command": "sonnetdb.refreshExplorer",
+        "title": "SonnetDB: Refresh Explorer"
+      },
+      {
+        "command": "sonnetdb.runQuery",
+        "title": "SonnetDB: Run Query"
+      },
+      {
+        "command": "sonnetdb.openCopilot",
+        "title": "SonnetDB: Open Copilot"
+      },
+      {
+        "command": "sonnetdb.startManagedLocalServer",
+        "title": "SonnetDB: Start Managed Local Server"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "sonnetdb",
+          "title": "SonnetDB",
+          "icon": "media/sonnetdb.svg"
+        }
+      ]
+    },
+    "views": {
+      "sonnetdb": [
+        {
+          "id": "sonnetdb.explorer",
+          "name": "Explorer"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "SonnetDB",
+      "properties": {
+        "sonnetdb.defaultBaseUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:5080",
+          "description": "Default SonnetDB base URL for new remote connections."
+        },
+        "sonnetdb.query.maxRows": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 1,
+          "description": "Default client-side row cap for query preview surfaces."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "tsc --noEmit -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/vscode": "^1.100.0",
+    "typescript": "^5.8.3"
+  }
+}

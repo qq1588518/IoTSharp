@@ -1,0 +1,19 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "windows-x86",
+      "displayName": "VB6 connector bridge on Windows x86",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "Win32",
+      "binaryDir": "${sourceDir}/../../artifacts/connectors/vb6/win-x86"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-x86",
+      "configurePreset": "windows-x86",
+      "configuration": "Release"
+    }
+  ]
+}

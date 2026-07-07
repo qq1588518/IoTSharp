@@ -1,0 +1,82 @@
+# SonnetDB VS Code Extension Roadmap
+
+This roadmap is the implementation plan for the official SonnetDB VS Code extension.
+
+## Product direction
+
+The extension should feel like an official database product surface, not only a SQL syntax helper.
+
+Core goals:
+
+- connect to remote SonnetDB servers
+- browse databases, measurements, and columns
+- run SonnetDB SQL with schema-aware completion
+- render query results in table, raw, and chart views
+- expose SonnetDB Copilot inside VS Code
+- add managed local-server mode for opening local data directories
+
+## Design constraints
+
+- The VS Code host stays TypeScript-first.
+- Phase 1 does not require `SonnetDB.Data` inside the extension host.
+- Phase 1 reuses existing SonnetDB HTTP endpoints.
+- Local mode is implemented as "managed server for a selected data root", not as direct embedded-engine hosting in Node.
+- The extension should keep the write path explicit and safe, especially for Copilot.
+
+## PR plan
+
+| PR | Theme | Status |
+|----|-------|--------|
+| #99 | Extension bootstrap: `package.json`, commands, activity bar container, tree view scaffold, base TypeScript structure | Planned |
+| #100 | Remote connection profiles: connection model, `SecretStorage`, health check, setup-state detection, active connection selection | Planned |
+| #101 | Explorer tree: connections -> databases -> measurements -> columns, schema refresh, sample rows entry point | Planned |
+| #102 | SQL execution: run current statement, run selection, NDJSON parser, raw result model, schema-aware completion bootstrap | Planned |
+| #103 | Result UI: webview panel with table/raw/chart tabs, query history, export-to-file hooks | Planned |
+| #104 | Copilot panel: `/v1/copilot/chat/stream`, mode switch (`read-only` / `read-write`), model selector, citation view | Planned |
+| #105 | Managed local mode: start/stop SonnetDB server for a selected data root, port detection, bootstrap flow | Planned |
+| #106 | Productivity features: create-measurement wizard, bulk import flow, starter snippets, open help from editor context | Planned |
+| #107 | Language-service sidecar: SQL diagnostics, hover, richer completion, explain and repair hooks | Planned |
+| #108 | Packaging and release: tests, CI, VSIX build, Marketplace metadata, docs, screenshots | Planned |
+
+## First wave acceptance criteria
+
+The first wave is `#99` through `#103`.
+
+It is complete when:
+
+- a user can add a remote SonnetDB server connection
+- the explorer can show databases and schema
+- the editor can run SQL against a selected database
+- result sets render in a dedicated panel
+- time-series results can be switched to a chart view
+
+## Suggested execution order
+
+```text
+#99 -> #100 -> #101 -> #102 -> #103
+                    -> #104
+          -> #105
+               -> #106 -> #107 -> #108
+```
+
+## Dependency map to existing server contracts
+
+- `GET /v1/db`
+- `GET /v1/db/{db}/schema`
+- `POST /v1/db/{db}/sql`
+- `POST /v1/db/{db}/measurements/{m}/lp|json|bulk`
+- `GET /v1/copilot/models`
+- `POST /v1/copilot/chat/stream`
+- `GET /v1/copilot/knowledge/status`
+- `GET /healthz`
+- `GET /v1/setup/status`
+
+## Notes on local mode
+
+Local mode is intentionally delayed until `#105`.
+
+Reason:
+
+- it avoids mixing .NET runtime concerns into the first VS Code slice
+- it reuses the server endpoints already proven by web admin and ADO.NET remote mode
+- it gives the extension a single transport model for remote and managed-local scenarios

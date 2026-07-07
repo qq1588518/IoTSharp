@@ -1,0 +1,80 @@
+# Architecture Notes
+
+## 1. Runtime model
+
+The extension should have three layers:
+
+1. VS Code host layer
+   - commands
+   - tree views
+   - webview panels
+   - secret storage
+2. SonnetDB transport layer
+   - HTTP client
+   - NDJSON parser
+   - Copilot SSE client
+3. Optional managed local runtime
+   - start and stop a local SonnetDB server process
+   - point that server at a selected data root
+
+## 2. Why remote-first
+
+Remote-first is the fastest production path because SonnetDB already exposes the required server contracts:
+
+- list databases
+- fetch schema
+- execute SQL
+- ingest bulk payloads
+- stream Copilot events
+- expose MCP endpoints
+
+That means the extension can ship useful database features without inventing a new transport.
+
+## 3. Why not start with SonnetDB.Data inside VS Code
+
+Using `SonnetDB.Data` directly inside the extension host would require:
+
+- a .NET sidecar process or native bridge
+- process lifecycle management
+- IPC or stdio protocol work
+- platform packaging complexity
+
+That path is still useful later, especially for language services, but it should not block the first extension release.
+
+## 4. Local mode direction
+
+The preferred local-mode design is:
+
+- user picks a local SonnetDB data root
+- extension starts a managed SonnetDB server process
+- extension connects to that local server through the same HTTP client used for remote mode
+
+Benefits:
+
+- one transport model
+- reuse of existing auth, schema, SQL, and Copilot endpoints
+- lower implementation risk
+
+## 5. UI surfaces
+
+Recommended VS Code surfaces:
+
+- activity bar container: explorer tree and connection actions
+- command palette: add connection, run query, open result panel, open Copilot
+- custom result webview: table, raw JSON, chart
+- optional future notebook: query workbook for demos and onboarding
+- optional future chat participant: SonnetDB-aware assistant entry
+
+## 6. Security model
+
+- connection metadata can live in extension global state
+- tokens should live in VS Code `SecretStorage`
+- Copilot defaults to `read-only`
+- `read-write` Copilot mode should require explicit user action
+
+## 7. Testing strategy
+
+- unit tests for NDJSON parsing and endpoint payload normalization
+- integration tests against a local SonnetDB server process
+- smoke tests for explorer tree loading and query execution
+- later: VS Code extension tests for command registration and webview rendering
